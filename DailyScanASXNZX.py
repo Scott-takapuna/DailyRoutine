@@ -1,6 +1,7 @@
 import pandas as pd
 
 import os
+import sys
 
 import yfinance as yf
 
@@ -20,6 +21,9 @@ import logging
 from joblib import Parallel, delayed
 
 
+
+# configure stdout to handle unicode output
+sys.stdout.reconfigure(encoding='utf-8')
 
 # === Configuration ===
 
@@ -219,10 +223,10 @@ def main():
             trades = int(row['# of trades'])
             Strat_return = float(row['Strategy Run Rate'])
             Stop_loss = float(row['Min_StopLoss%'])
-            print(f"🔍 Processing {rank}. {ticker} with n_components={n_components}, degree={degree}, std_multiplier={std_multiplier}, train_window={train_window}")
+            print(f"Processing {rank}. {ticker} with n_components={n_components}, degree={degree}, std_multiplier={std_multiplier}, train_window={train_window}")
             return process_ticker_to_excel(ticker, start_date, end_date, n_components, degree, std_multiplier, train_window, rank, sector, industry, title, trades, Strat_return, Stop_loss)
         except Exception as e:
-            print(f"⚠️ Skipping {ticker} due to missing/invalid parameters: {e}")
+            print(f"Skipping {ticker} due to missing/invalid parameters: {e}")
             return []
 
     results = Parallel(n_jobs=-1)(delayed(process_row)(row) for _, row in tickers_df.iterrows())
@@ -265,11 +269,11 @@ def main():
 
 
 
-        print(f"\n🚨 Signal Alert CSV created: {alert_filename} ({len(alerts_df)} recent signals found)\n")
+        print(f"\nSignal Alert CSV created: {alert_filename} ({len(alerts_df)} recent signals found)\n")
 
     else:
 
-        print("\n✅ No new signals in the last 2 days. No Signal Alert file created.\n")
+        print("\nNo new signals in the last 2 days. No Signal Alert file created.\n")
 
         
 
